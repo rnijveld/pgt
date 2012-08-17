@@ -3,7 +3,7 @@
     "type": "library",
     "description": "GNU Gettext PO and MO reading and writing",
     "keywords": ["gettext", "translation", "i18n", "L10n", "localization"],
-    "homepage": "http://github.com/rnijveld/pgettext",
+    "homepage": "http://github.com/rnijveld/pgt",
     "license": "MIT",
     "authors": [
         {"name": "Ruben Nijveld", "email": "ruben@gewooniets.nl"}
