@@ -49,7 +49,7 @@ class Po
      */
     public static function toString(Stringset $set, array $options)
     {
-        // TODO
+        // TODO: implement writing of po files
     }
 
     /**

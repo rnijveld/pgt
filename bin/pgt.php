@@ -8,4 +8,3 @@ require_once "lib/Pgettext/Pgettext.php";
 require_once "lib/Pgettext/Exception.php";
 
 Pgettext\Pgettext::msgfmt($argv[1]);
-// Pgettext\Mo::toFile($stringset, '')

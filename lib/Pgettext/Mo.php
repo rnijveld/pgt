@@ -135,7 +135,7 @@ class Mo
      */
     public static function fromString($str)
     {
-        // TODO
+        // TODO: implement reading of mo files.
     }
 
     /**
