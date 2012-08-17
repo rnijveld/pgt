@@ -1,0 +1,20 @@
+{
+    "name": "pgettext/pgettext",
+    "type": "library",
+    "description": "GNU Gettext PO and MO reading and writing",
+    "keywords": ["gettext", "translation", "i18n", "L10n", "localization"],
+    "homepage": "http://github.com/rnijveld/pgettext",
+    "license": "MIT",
+    "authors": [
+        {"name": "Ruben Nijveld", "email": "ruben@gewooniets.nl"}
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Pgettext": "lib"
+        }
+    },
+    "bin": ["bin/pgt", "bin/pgt.php"]
+}
