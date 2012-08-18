@@ -135,7 +135,77 @@ class Mo
      */
     public static function fromString($str)
     {
-        // TODO: implement reading of mo files.
+        $set = new Stringset();
+        $data = str_split($str, 1);
+        $pos = 0;
+
+        list(,$magic) = unpack('L', self::mergechars($data, $pos, 4));
+
+        if ($magic !== self::MAGIC_NUMBER) {
+            throw new Exception("This is not a MO string.");
+        }
+
+        list(,$version) = unpack('L', self::mergechars($data, $pos, 4));
+
+        if ($version !== self::REVISION) {
+            throw new Exception("This file format revision is not supported.");
+        }
+
+        list(,$nstrings) = unpack('L', self::mergechars($data, $pos, 4));
+        list(,$ostart) = unpack('L', self::mergechars($data, $pos, 4));
+        list(,$tstart) = unpack('L', self::mergechars($data, $pos, 4));
+
+        for ($i = 0; $i < $nstrings; $i += 1) {
+            $original = $ostart + ($i * 8);
+            $translated = $tstart + ($i * 8);
+            $original = unpack('Llength/Loffset', self::mergechars($data, $original, 8));
+            $translated = unpack('Llength/Loffset', self::mergechars($data, $translated, 8));
+
+            $id = self::mergechars($data, $original['offset'], $original['length'] + 1, false);
+            $value = self::mergechars($data, $translated['offset'], $translated['length'] + 1, false);
+
+            if ($id[strlen($id) - 1] !== self::NUL || $value[strlen($value) - 1] !== self::NUL) {
+                throw new Exception("String wasn't NUL-terminated");
+            }
+
+            $result = array();
+
+            $id = explode(self::NUL, $id);
+            if (count($id) === 3) {
+                $result['msgid_plural'] = $id[1];
+            }
+            $id = explode(self::EOT, $id[0]);
+            if (count($id) === 2) {
+                $result['msgctxt'] = $id[0];
+                $result['msgid'] = $id[1];
+            } else {
+                $result['msgid'] = $id[0];
+            }
+
+            $value = explode(self::NUL, $value);
+            array_pop($value);
+            $result['msgstr'] = $value;
+            $set->add($result);
+        }
+        return $set;
+    }
+
+    private static function mergechars($arr, &$start, $length = null, $autoincr = true)
+    {
+        $res = '';
+        if ($length === null || $length === 0) {
+            $end = count($arr);
+        } else if ($length < 0) {
+            $end = count($arr) - $length;
+        } else {
+            $end = $start + $length;
+        }
+
+        for ($i = $start; $i < $end; $i += 1) {
+            $res .= $arr[$i];
+        }
+        $start = $end;
+        return $res;
     }
 
     /**

@@ -24,10 +24,9 @@ class Po
      * Takes a Stringset and a filename and writes a po formatted file.
      * @param Stringset $set
      * @param string $filename
-     * @param array $options
      * @return void
      */
-    public static function toFile(Stringset $set, $filename, array $options)
+    public static function toFile(Stringset $set, $filename)
     {
         try {
             $str = self::toString($set, $options);
@@ -44,12 +43,85 @@ class Po
     /**
      * Takes a Stringset and an array of options and creates a po formatted string.
      * @param Stringset $set
-     * @param array $options
      * @return string
      */
-    public static function toString(Stringset $set, array $options)
+    public static function toString(Stringset $set)
     {
-        // TODO: implement writing of po files
+        $str = '';
+        for ($i = 0; $i < $set->size(); $i += 1) {
+            $item = $set->item($i);
+            if (count($item['flags']) > 0) {
+                $str .= "#, " . implode(", ", $item['flags']) . "\n";
+            }
+
+            if ($item['context'] !== null) {
+                $str .= "msgctxt " . '"' . $item['context'] . '"' . "\n";
+            }
+
+            $str .= "msgid " . '"' . self::escapeString($item['id']) . '"' . "\n";
+
+            if ($item['plural'] !== null) {
+                $str .= "msgid_plural " . '"' . self::escapeString($item['plural']) . '"' . "\n";
+            }
+
+            if (count($item['strings']) === 1) {
+                $str .= "msgstr " . '"' . self::escapeString($item['strings'][0]) . '"' . "\n";
+            } else {
+                for ($j = 0; $j < count($item['strings']); $j += 1) {
+                    $str .= "msgstr[" . $i . "] " . '"' . self::escapeString($item['strings'][0]) . '"' . "\n";
+                }
+            }
+            $str .= "\n";
+        }
+        return $str;
+    }
+
+    /**
+     * Adds escapes to characters that are in some way special.
+     * @param string $str
+     * @return string
+     */
+    private static function escapeString($str)
+    {
+        if (strlen($str) === 0) {
+            return $str;
+        }
+
+        $str = str_replace(array(
+            "\r",
+            "\t",
+            "\\",
+            "\$",
+            "\v",
+            "\e",
+            "\f",
+            "\""
+        ), array(
+            '\r',
+            '\t',
+            '\\\\',
+            '\$',
+            '\v',
+            '\e',
+            '\f',
+            '\"'
+        ), $str);
+
+        $str = str_replace("\n", "\\n\"\n\"", $str);
+
+        $result = '';
+        $str = str_split($str, 1);
+        foreach ($str as $chr) {
+            if (!ctype_print($chr) && $chr !== "\n") {
+                $result .= '\\' . decoct(ord($chr));
+            } else {
+                $result .= $chr;
+            }
+        }
+        if (substr($result, -5) === "\\n\"\n\"") {
+            $result = substr($result, 0, -5) . "\\n";
+        }
+        return $result;
     }
 
     /**

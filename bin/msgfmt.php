@@ -1,6 +1,5 @@
 <?php
 
-// TODO
 require_once "lib/Pgettext/Po.php";
 require_once "lib/Pgettext/Mo.php";
 require_once "lib/Pgettext/Stringset.php";
