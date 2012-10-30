@@ -35,7 +35,7 @@ class Po
     {
         try {
             $str = self::toString($set, $options);
-            if (is_writable($filename)) {
+            if (!file_exists($filename) || is_writable($filename)) {
                 file_put_contents($filename, $str);
             } else {
                 throw new Exception("Cannot write to file");

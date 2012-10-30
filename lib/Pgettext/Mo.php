@@ -45,7 +45,7 @@ class Mo
      */
     public static function toFile(Stringset $set, $file)
     {
-        if (is_writable($file)) {
+        if (!file_exists($file) || is_writable($file)) {
             file_put_contents($file, self::toString($set));
         } else {
             throw new Exception("Could not write output to file.");
